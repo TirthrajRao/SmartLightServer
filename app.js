@@ -119,6 +119,8 @@ app.get('/api/findZone', function (req, res) {
             return res.status(500).send("Internal server error")
         } else if (zone) {
             res.send(zone)
+            console.log(zone)
+            console.log("===============================================================================================")
         } else {
             return res.status(404).send("No record found")
         }
@@ -253,6 +255,44 @@ app.put('/api/updateDevice/:id', (req, res, next) => {
             });
     });
 })
+
+
+
+
+
+
+app.get('/api/status/:id', function (req, res) {
+
+    var arr2 = [];
+    
+    console.log(req.params.id)
+
+    var id = req.params.id
+    deviceModel.find({ zone_id: req.params.id }).select('state').exec((err, device) => {
+        console.log("Status Api Is working", device);
+        if (err) {
+            return res.status(500).send("Internal server error")
+        } else if (device) 
+        {
+            device.forEach(i => {
+                arr2.push(i.state)
+                
+            });
+
+            console.log(arr2);
+
+            res.send(arr2);
+            // res.json(device);
+        } else {
+            return res.status(404).send("No user found")
+        }
+    });
+    
+            // res.json({data: "1", status: "off"});
+            
+
+});
+
 
 
 const server = http.createServer(app)

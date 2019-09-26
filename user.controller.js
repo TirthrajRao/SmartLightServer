@@ -11,7 +11,7 @@ userController.findAllUser = (req, res) => {
         });
         if (err) {
             return res.status(500).send("Internal server error")
-        } else if (user) {
+        } else if (users) {
             return res.send(userMap);
         }    
     });
