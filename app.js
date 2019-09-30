@@ -263,7 +263,7 @@ app.put('/api/updateDevice/:id', (req, res, next) => {
 
 app.get('/api/status/:id', function (req, res) {
 
-    var arr2 = [];
+    var data = [];
     
     console.log(req.params.id)
 
@@ -275,23 +275,85 @@ app.get('/api/status/:id', function (req, res) {
         } else if (device) 
         {
             device.forEach(i => {
-                arr2.push(i.state)
+                data.push([i._id,i.state])
                 
             });
 
-            console.log(arr2);
-
-            res.send(arr2);
-            // res.json(device);
+            console.log(data);
+            const obj = JSON.stringify(data);
+             res.json({data: JSON.parse(obj)});
+            // res.json({data: [["1", "off"],["2", "off"],["3", "on"]]});
         } else {
             return res.status(404).send("No user found")
         }
+
+        // console.log(req.params.id)
+    
+        //     res.json({data: [["1", "off"],["2", "off"],["3", "on"]]});
+
     });
     
             // res.json({data: "1", status: "off"});
             
 
 });
+
+
+
+
+
+app.get('/api/Demo/:id', function (req, res) {
+
+    var data = [];
+    
+    console.log(req.params.id)
+
+    var id = req.params.id
+    deviceModel.find({ zone_id: req.params.id }).select('state').exec((err, device) => {
+        console.log("Status Api Is working", device);
+        if (err) {
+            return res.status(500).send("Internal server error")
+        } else if (device) 
+        {
+            device.forEach(i => {
+                data.push([i._id,i.state])
+                
+            });
+
+            console.log(data);
+            const obj = JSON.stringify(data);
+             res.json({data: JSON.parse(obj)});
+            // res.json({data: [["1", "off"],["2", "off"],["3", "on"]]});
+        } else {
+            return res.status(404).send("No user found")
+        }
+
+        // console.log(req.params.id)
+    
+        //     res.json({data: [["1", "off"],["2", "off"],["3", "on"]]});
+
+    });
+});
+
+
+
+//Schedule Time to on/off device post api
+
+app.post('/api/scheduleDevice', (req, res, next) => {
+    console.log(req.body);
+    const newDevice = new deviceModel(req.body);
+    newDevice.save((err, device) => {
+        if (err) {
+            res.status(500).send('Internal server error');
+        } else {
+            console.log(device);
+            res.status(201).json({
+                message: 'New device added',
+                data: device
+            });
+        }
+    });
+})
 
 
 
