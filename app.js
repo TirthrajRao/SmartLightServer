@@ -268,7 +268,7 @@ app.get('/api/status/:id', function (req, res) {
     console.log(req.params.id)
 
     var id = req.params.id
-    deviceModel.find({ zone_id: req.params.id }).select('state').exec((err, device) => {
+    deviceModel.find({ device_id: req.params.id }).select('state').exec((err, device) => {
         console.log("Status Api Is working", device);
         if (err) {
             return res.status(500).send("Internal server error")
