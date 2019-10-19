@@ -242,6 +242,7 @@ app.get('/api/deleteDevice/:id', function (req, res) {
 app.put('/api/updateDevice/:id', (req, res, next) => {
     console.log(req.body);
     // const newUser = new userModel(req.body);
+    
     deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
         console.log(device);
         if (err) {
