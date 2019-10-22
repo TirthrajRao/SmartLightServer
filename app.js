@@ -36,6 +36,27 @@ app.post('/api/data', (req, res, next) => {
     });
 })
 
+//Login Api
+
+app.post('/api/login', (req, res, next) => {
+    console.log(req.body);
+
+    var user = User.build();
+
+    console.log("User Detail",user);
+
+    var post = req.body;
+  if (post.email === 'raam@g.c' && post.password === 'raam@123') {
+    res.send('/my_secret_page');
+  } else {
+    res.send('Bad user/pass');
+  }
+})
+
+
+
+
+
  app.get('/api/find', userController.findAllUser);
 
 
@@ -287,16 +308,7 @@ app.get('/api/status/:id', function (req, res) {
         } else {
             return res.status(404).send("No user found")
         }
-
-        // console.log(req.params.id)
-    
-        //     res.json({data: [["1", "off"],["2", "off"],["3", "on"]]});
-
     });
-    
-            // res.json({data: "1", status: "off"});
-            
-
 });
 
 
