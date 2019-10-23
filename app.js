@@ -36,28 +36,49 @@ app.post('/api/data', (req, res, next) => {
     });
 })
 
+
+
+
+
+
 //Login Api
 
 app.post('/api/login', (req, res, next) => {
-    console.log(req.body);
 
-    var user = User.build();
+    // res.send("Raaja Raam")
 
-    console.log("User Detail",user);
+    const newUser = new userModel(req.body);
 
-    var post = req.body;
-  if (post.email === 'raam@g.c' && post.password === 'raam@123') {
-    res.send('/my_secret_page');
-  } else {
-    res.send('Bad user/pass');
-  }
+    console.log("Email for login :::::::::::::::::::::::::: ",newUser.password);
+
+    userModel.find({ email: newUser.email, password: newUser.password }).exec((err, user) => {
+        console.log("Status Api Is working", user);
+        if (err) {
+
+            console.log("Error  :::::::::::::::::::::::::: ",err);
+
+            return res.status(500).send("Internal server error")
+        } else if (user) {
+            console.log("login Success  :::::::::::::::::::::::::: ",user);
+            if(user)
+            res.status(201).json({
+                message: 'New user created',
+                status: 201,
+                data: user
+            });
+        } else {
+            return res.status(404).send("No user found")
+        }
+    });
 })
 
 
 
 
 
- app.get('/api/find', userController.findAllUser);
+
+
+app.get('/api/find', userController.findAllUser);
 
 
 app.get('/api/findone/:id', function (req, res) {
@@ -263,7 +284,7 @@ app.get('/api/deleteDevice/:id', function (req, res) {
 app.put('/api/updateDevice/:id', (req, res, next) => {
     console.log(req.body);
     // const newUser = new userModel(req.body);
-    
+
     deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
         console.log(device);
         if (err) {
@@ -272,9 +293,9 @@ app.put('/api/updateDevice/:id', (req, res, next) => {
                 .send({ error: "unsuccessful" })
         };
         console.log(device);
-            res.status(201).json({
-                message: device,
-            });
+        res.status(201).json({
+            message: device,
+        });
     });
 })
 
@@ -286,7 +307,7 @@ app.put('/api/updateDevice/:id', (req, res, next) => {
 app.get('/api/status/:id', function (req, res) {
 
     var data = [];
-    
+
     console.log(req.params.id)
 
     var id = req.params.id
@@ -294,16 +315,15 @@ app.get('/api/status/:id', function (req, res) {
         console.log("Status Api Is working", device);
         if (err) {
             return res.status(500).send("Internal server error")
-        } else if (device) 
-        {
+        } else if (device) {
             device.forEach(i => {
-                data.push([i._id,i.state])
-                
+                data.push([i._id, i.state])
+
             });
 
             console.log(data);
             const obj = JSON.stringify(data);
-             res.json({data: JSON.parse(obj)});
+            res.json({ data: JSON.parse(obj) });
             // res.json({data: [["1", "off"],["2", "off"],["3", "on"]]});
         } else {
             return res.status(404).send("No user found")
@@ -318,7 +338,7 @@ app.get('/api/status/:id', function (req, res) {
 app.get('/api/Demo/:id', function (req, res) {
 
     var data = [];
-    
+
     console.log(req.params.id)
 
     var id = req.params.id
@@ -326,23 +346,22 @@ app.get('/api/Demo/:id', function (req, res) {
         console.log("Status Api Is working", device);
         if (err) {
             return res.status(500).send("Internal server error")
-        } else if (device) 
-        {
+        } else if (device) {
             device.forEach(i => {
-                data.push([i._id,i.state])
-                
+                data.push([i._id, i.state])
+
             });
 
             console.log(data);
             const obj = JSON.stringify(data);
-             res.json({data: JSON.parse(obj)});
+            res.json({ data: JSON.parse(obj) });
             // res.json({data: [["1", "off"],["2", "off"],["3", "on"]]});
         } else {
             return res.status(404).send("No user found")
         }
 
         // console.log(req.params.id)
-    
+
         //     res.json({data: [["1", "off"],["2", "off"],["3", "on"]]});
 
     });
