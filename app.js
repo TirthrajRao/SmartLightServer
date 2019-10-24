@@ -1,5 +1,6 @@
 const http = require('http');
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -45,27 +46,38 @@ app.post('/api/data', (req, res, next) => {
 
 app.post('/api/login', (req, res, next) => {
 
-    // res.send("Raaja Raam")
-
     const newUser = new userModel(req.body);
 
-    console.log("Email for login :::::::::::::::::::::::::: ",newUser.password);
+    console.log("Email for login :::::::::::::::::::::::::: ", newUser.password);
 
     userModel.find({ email: newUser.email, password: newUser.password }).exec((err, user) => {
         console.log("Status Api Is working", user);
         if (err) {
 
-            console.log("Error  :::::::::::::::::::::::::: ",err);
+            console.log("Error  :::::::::::::::::::::::::: ", err);
 
             return res.status(500).send("Internal server error")
         } else if (user) {
-            console.log("login Success  :::::::::::::::::::::::::: ",user);
-            if(user)
-            res.status(201).json({
-                message: 'New user created',
-                status: 201,
-                data: user
-            });
+            console.log("login Success  :::::::::::::::::::::::::: ", user);
+            if (user.length != 0) {
+
+jwt.sign({user},'secretkey',(err,jwt)=>{
+    res.status(201).json({
+        message: 'Login Success',
+        status: 201,
+        token: jwt,
+        data: user
+    });
+});
+
+                
+            }
+            else {
+                res.status(203).json({
+                    message: 'No user found',
+                    status: 203
+                });
+            }
         } else {
             return res.status(404).send("No user found")
         }
@@ -153,7 +165,7 @@ app.post('/api/addzone', (req, res, next) => {
 
 app.get('/api/findZone', function (req, res) {
 
-    console.log(req.params.id)
+    console.log(req.headers)
 
     var id = req.params.id
     zoneModel.find((err, zone) => {
