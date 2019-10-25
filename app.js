@@ -297,17 +297,17 @@ app.get('/api/findDevices/:id', verifyToken, function (req, res) {
         }
         else {
 
-    var id = req.params.id
-    deviceModel.find({ zone_id: req.params.id }, (err, device) => {
-        if (err) {
-            return res.status(500).send("Internal server error")
-        } else if (device) {
-            res.send(device)
-        } else {
-            return res.status(404).send("No user found")
+            var id = req.params.id
+            deviceModel.find({ zone_id: req.params.id }, (err, device) => {
+                if (err) {
+                    return res.status(500).send("Internal server error")
+                } else if (device) {
+                    res.send(device)
+                } else {
+                    return res.status(404).send("No user found")
+                }
+            });
         }
-    });
-}
     });
 });
 
@@ -321,16 +321,16 @@ app.get('/api/deleteDevice/:id', verifyToken, function (req, res) {
         }
         else {
 
-    var id = req.params.id
-    deviceModel.findByIdAndRemove(id, function (err, device) {
+            var id = req.params.id
+            deviceModel.findByIdAndRemove(id, function (err, device) {
 
-        if (err) {
-            return res.status(500).send("Internal server error")
-        } else {
-            res.send("Device Deleted")
+                if (err) {
+                    return res.status(500).send("Internal server error")
+                } else {
+                    res.send("Device Deleted")
+                }
+            });
         }
-    });
-}
     });
 });
 
@@ -345,19 +345,19 @@ app.put('/api/updateDevice/:id', verifyToken, (req, res, next) => {
         }
         else {
 
-    deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
-        console.log(device);
-        if (err) {
-            return res
-                .status(500)
-                .send({ error: "unsuccessful" })
-        };
-        console.log(device);
-        res.status(201).json({
-            message: device,
-        });
-    });
-}
+            deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
+                console.log(device);
+                if (err) {
+                    return res
+                        .status(500)
+                        .send({ error: "unsuccessful" })
+                };
+                console.log(device);
+                res.status(201).json({
+                    message: device,
+                });
+            });
+        }
     });
 })
 
