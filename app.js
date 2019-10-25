@@ -61,16 +61,16 @@ app.post('/api/login', (req, res, next) => {
             console.log("login Success  :::::::::::::::::::::::::: ", user);
             if (user.length != 0) {
 
-jwt.sign({user},'secretkey',(err,jwt)=>{
-    res.status(201).json({
-        message: 'Login Success',
-        status: 201,
-        token: jwt,
-        data: user
-    });
-});
+                jwt.sign({ user }, 'secretkey', (err, jwt) => {
+                    res.status(201).json({
+                        message: 'Login Success',
+                        status: 201,
+                        token: jwt,
+                        data: user
+                    });
+                });
 
-                
+
             }
             else {
                 res.status(203).json({
@@ -145,7 +145,7 @@ app.put('/api/update/:id', (req, res, next) => {
 
 //AddZone post api
 
-app.post('/api/addzone', (req, res, next) => {
+app.post('/api/addzone', verifyToken, (req, res, next) => {
     console.log(req.body);
     const newZone = new zoneModel(req.body);
     newZone.save((err, zone) => {
@@ -163,37 +163,49 @@ app.post('/api/addzone', (req, res, next) => {
 
 //GetZone get api
 
-app.get('/api/findZone', function (req, res) {
+app.get('/api/findZone', verifyToken, function (req, res) {
 
-    console.log(req.headers)
-
-    var id = req.params.id
-    zoneModel.find((err, zone) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
         if (err) {
-            return res.status(500).send("Internal server error")
-        } else if (zone) {
-            res.send(zone)
-            console.log(zone)
-            console.log("===============================================================================================")
-        } else {
-            return res.status(404).send("No record found")
+            res.sendStatus(403);
+        }
+        else {
+            var id = req.params.id
+            zoneModel.find((err, zone) => {
+                if (err) {
+                    return res.status(500).send("Internal server error")
+                } else if (zone) {
+                    res.send(zone)
+                    console.log(zone)
+                    console.log("===============================================================================================")
+                } else {
+                    return res.status(404).send("No record found")
+                }
+            });
         }
     });
+
 });
 
 //DeleteZone get api
 
-app.get('/api/deleteZone/:id', function (req, res) {
+app.get('/api/deleteZone/:id', verifyToken, function (req, res) {
 
     console.log(req.params.id)
 
-    var id = req.params.id
-    zoneModel.findByIdAndRemove(id, function (err, zone) {
-
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
         if (err) {
-            return res.status(500).send("Internal server error")
-        } else {
-            res.send("Zone Deleted")
+            res.sendStatus(403);
+        }
+        else {
+            zoneModel.findByIdAndRemove(id, function (err, zone) {
+
+                if (err) {
+                    return res.status(500).send("Internal server error")
+                } else {
+                    res.send("Zone Deleted")
+                }
+            });
         }
     });
 });
@@ -201,17 +213,24 @@ app.get('/api/deleteZone/:id', function (req, res) {
 
 //UpdateZone put api
 
-app.put('/api/updateZone/:id', (req, res, next) => {
+app.put('/api/updateZone/:id', verifyToken, (req, res, next) => {
     console.log(req.body);
     // const newUser = new userModel(req.body);
-    zoneModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, zone) => {
-        console.log(zone);
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
         if (err) {
-            return res
-                .status(500)
-                .send({ error: "unsuccessful" })
-        };
-        res.send({ success: "success" });
+            res.sendStatus(403);
+        }
+        else {
+            zoneModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, zone) => {
+                console.log(zone);
+                if (err) {
+                    return res
+                        .status(500)
+                        .send({ error: "unsuccessful" })
+                };
+                res.send({ success: "success" });
+            });
+        }
     });
 })
 
@@ -220,17 +239,24 @@ app.put('/api/updateZone/:id', (req, res, next) => {
 
 //AddDevice post api
 
-app.post('/api/addDevice', (req, res, next) => {
+app.post('/api/addDevice', verifyToken, (req, res, next) => {
     console.log(req.body);
-    const newDevice = new deviceModel(req.body);
-    newDevice.save((err, device) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
         if (err) {
-            res.status(500).send('Internal server error');
-        } else {
-            console.log(device);
-            res.status(201).json({
-                message: 'New device added',
-                data: device
+            res.sendStatus(403);
+        }
+        else {
+            const newDevice = new deviceModel(req.body);
+            newDevice.save((err, device) => {
+                if (err) {
+                    res.status(500).send('Internal server error');
+                } else {
+                    console.log(device);
+                    res.status(201).json({
+                        message: 'New device added',
+                        data: device
+                    });
+                }
             });
         }
     });
@@ -238,18 +264,24 @@ app.post('/api/addDevice', (req, res, next) => {
 
 //GetDevice get api
 
-app.get('/api/findDevice', function (req, res) {
+app.get('/api/findDevice', verifyToken, function (req, res) {
 
-    console.log(req.params.id)
-
-    var id = req.params.id
-    deviceModel.find((err, device) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
         if (err) {
-            return res.status(500).send("Internal server error")
-        } else if (device) {
-            res.send(device)
-        } else {
-            return res.status(404).send("No record found")
+            res.sendStatus(403);
+        }
+        else {
+
+            var id = req.params.id
+            deviceModel.find((err, device) => {
+                if (err) {
+                    return res.status(500).send("Internal server error")
+                } else if (device) {
+                    res.send(device)
+                } else {
+                    return res.status(404).send("No record found")
+                }
+            });
         }
     });
 });
@@ -257,9 +289,13 @@ app.get('/api/findDevice', function (req, res) {
 
 //GetDevice by Id get api
 
-app.get('/api/findDevices/:id', function (req, res) {
+app.get('/api/findDevices/:id', verifyToken, function (req, res) {
 
-    console.log(req.params.id)
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if (err) {
+            res.sendStatus(403);
+        }
+        else {
 
     var id = req.params.id
     deviceModel.find({ zone_id: req.params.id }, (err, device) => {
@@ -271,13 +307,19 @@ app.get('/api/findDevices/:id', function (req, res) {
             return res.status(404).send("No user found")
         }
     });
+}
+    });
 });
 
 //DeleteDevice get api
 
-app.get('/api/deleteDevice/:id', function (req, res) {
+app.get('/api/deleteDevice/:id', verifyToken, function (req, res) {
 
-    console.log(req.params.id)
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if (err) {
+            res.sendStatus(403);
+        }
+        else {
 
     var id = req.params.id
     deviceModel.findByIdAndRemove(id, function (err, device) {
@@ -288,14 +330,20 @@ app.get('/api/deleteDevice/:id', function (req, res) {
             res.send("Device Deleted")
         }
     });
+}
+    });
 });
 
 
 //UpdateDevice put api
 
-app.put('/api/updateDevice/:id', (req, res, next) => {
+app.put('/api/updateDevice/:id', verifyToken, (req, res, next) => {
     console.log(req.body);
-    // const newUser = new userModel(req.body);
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if (err) {
+            res.sendStatus(403);
+        }
+        else {
 
     deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
         console.log(device);
@@ -308,6 +356,8 @@ app.put('/api/updateDevice/:id', (req, res, next) => {
         res.status(201).json({
             message: device,
         });
+    });
+}
     });
 })
 
@@ -398,6 +448,24 @@ app.post('/api/scheduleDevice', (req, res, next) => {
         }
     });
 })
+
+
+//VerifyToken
+
+function verifyToken(req, res, next) {
+
+    const bearerHeader = req.headers['authorization'];
+
+    if (typeof bearerHeader !== 'undefined') {
+
+        req.token = bearerHeader;
+
+        next();
+    }
+    else {
+        res.sendStatus(403);
+    }
+}
 
 
 
