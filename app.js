@@ -8,6 +8,9 @@ const userModel = require('./user.model');
 const zoneModel = require('./zone.model');
 const deviceModel = require('./device.model');
 const userController = require('./user.controller');
+const firebase = require('./Firebase');
+const ref = firebase.app().database().ref();
+
 mongoose.connect('mongodb://localhost:27017/myFirstApp', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('Database connected');
@@ -37,13 +40,7 @@ app.post('/api/data', (req, res, next) => {
     });
 })
 
-
-
-
-
-
-//Login Api
-
+// Login Api
 app.post('/api/login', (req, res, next) => {
 
     const newUser = new userModel(req.body);
@@ -84,14 +81,7 @@ app.post('/api/login', (req, res, next) => {
     });
 })
 
-
-
-
-
-
-
 app.get('/api/find', userController.findAllUser);
-
 
 app.get('/api/findone/:id', function (req, res) {
 
@@ -109,7 +99,6 @@ app.get('/api/findone/:id', function (req, res) {
     });
 });
 
-
 app.get('/api/delete/:id', function (req, res) {
 
     console.log(req.params.id)
@@ -125,7 +114,6 @@ app.get('/api/delete/:id', function (req, res) {
     });
 });
 
-
 app.put('/api/update/:id', (req, res, next) => {
     console.log(req.body);
     // const newUser = new userModel(req.body);
@@ -140,11 +128,8 @@ app.put('/api/update/:id', (req, res, next) => {
     });
 })
 
-
 // ************** Add zone API ****************
-
-//AddZone post api
-
+// AddZone post api
 app.post('/api/addzone', verifyToken, (req, res, next) => {
     console.log(req.body);
     const newZone = new zoneModel(req.body);
@@ -161,8 +146,7 @@ app.post('/api/addzone', verifyToken, (req, res, next) => {
     });
 })
 
-//GetZone get api
-
+// GetZone get api
 app.get('/api/findZone', verifyToken, function (req, res) {
 
     jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -187,8 +171,7 @@ app.get('/api/findZone', verifyToken, function (req, res) {
 
 });
 
-//DeleteZone get api
-
+// DeleteZone get api
 app.get('/api/deleteZone/:id', verifyToken, function (req, res) {
 
     console.log(req.params.id)
@@ -210,9 +193,7 @@ app.get('/api/deleteZone/:id', verifyToken, function (req, res) {
     });
 });
 
-
-//UpdateZone put api
-
+// UpdateZone put api
 app.put('/api/updateZone/:id', verifyToken, (req, res, next) => {
     console.log(req.body);
     // const newUser = new userModel(req.body);
@@ -237,8 +218,7 @@ app.put('/api/updateZone/:id', verifyToken, (req, res, next) => {
 
 // ************** Add Device API ****************
 
-//AddDevice post api
-
+// AddDevice post api
 app.post('/api/addDevice', verifyToken, (req, res, next) => {
     console.log(req.body);
     jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -262,8 +242,7 @@ app.post('/api/addDevice', verifyToken, (req, res, next) => {
     });
 })
 
-//GetDevice get api
-
+// GetDevice get api
 app.get('/api/findDevice', verifyToken, function (req, res) {
 
     jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -286,9 +265,7 @@ app.get('/api/findDevice', verifyToken, function (req, res) {
     });
 });
 
-
-//GetDevice by Id get api
-
+// GetDevice by Id get api
 app.get('/api/findDevices/:id', verifyToken, function (req, res) {
 
     jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -311,8 +288,7 @@ app.get('/api/findDevices/:id', verifyToken, function (req, res) {
     });
 });
 
-//DeleteDevice get api
-
+// DeleteDevice get api
 app.get('/api/deleteDevice/:id', verifyToken, function (req, res) {
 
     jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -334,37 +310,42 @@ app.get('/api/deleteDevice/:id', verifyToken, function (req, res) {
     });
 });
 
-
-//UpdateDevice put api
-
-app.put('/api/updateDevice/:id', verifyToken, (req, res, next) => {
+// UpdateDevice put api
+// app.put('/api/updateDevice/:id', verifyToken, (req, res, next) => {
+app.put('/api/updateDevice/:id', (req, res, next) => {
     console.log(req.body);
-    jwt.verify(req.token, 'secretkey', (err, authData) => {
-        if (err) {
-            res.sendStatus(403);
-        }
-        else {
 
-            deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
-                console.log(device);
-                if (err) {
-                    return res
-                        .status(500)
-                        .send({ error: "unsuccessful" })
-                };
-                console.log(device);
-                res.status(201).json({
-                    message: device,
-                });
-            });
-        }
-    });
+    ref.update({ S1: 0 });
+
+    // ref.once("value")
+    //     .then(function (snap) {
+    //         console.log("snap.val()", snap.val());
+    //     });
+    // firebase.firestore().collection("devices").doc('JVTHk4rvFhIF1Ur0oGVV').set({sDevice: 1});
+    // return res.status(200).send();
+    // firebase.firestore().collection("devices").where("sDevice", "==", 1).get().then(function (querySnapshot) {
+    //     querySnapshot.forEach((doc) => {
+    //         const { sDevice } = doc.data();
+    //         console.log('querySnapshot', doc.data(), sDevice);
+    //     })
+    // }).catch(function (error) {
+    //     console.log("Error getting documents: ", error);
+    // });
+    // jwt.verify(req.token, 'secretkey', (err, authData) => {
+    //     if (err) {
+    //         res.sendStatus(403);
+    //     } else {
+    //         deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
+    //             console.log(device);
+    //             if (err) {
+    //                 return res.status(500).send({ error: "unsuccessful" })
+    //             };
+    //             console.log(device);
+    //             res.status(201).json({ message: device });
+    //         });
+    //     }
+    // });
 })
-
-
-
-
-
 
 app.get('/api/status/:id', function (req, res) {
 
@@ -392,10 +373,6 @@ app.get('/api/status/:id', function (req, res) {
         }
     });
 });
-
-
-
-
 
 app.get('/api/Demo/:id', function (req, res) {
 
@@ -429,10 +406,7 @@ app.get('/api/Demo/:id', function (req, res) {
     });
 });
 
-
-
-//Schedule Time to on/off device post api
-
+// Schedule Time to on/off device post api
 app.post('/api/scheduleDevice', (req, res, next) => {
     console.log(req.body);
     const newDevice = new deviceModel(req.body);
@@ -449,25 +423,16 @@ app.post('/api/scheduleDevice', (req, res, next) => {
     });
 })
 
-
-//VerifyToken
-
+// VerifyToken
 function verifyToken(req, res, next) {
-
     const bearerHeader = req.headers['authorization'];
-
     if (typeof bearerHeader !== 'undefined') {
-
         req.token = bearerHeader;
-
         next();
-    }
-    else {
+    } else {
         res.sendStatus(403);
     }
 }
-
-
 
 const server = http.createServer(app)
 server.listen(4000, () => {
