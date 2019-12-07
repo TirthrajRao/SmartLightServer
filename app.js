@@ -24,6 +24,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
+// app.use((req, res, next) => {
+//     console.log('req.body: ', req.body);
+//     // console.log('parsed: ', JSON.parse(req.body));
+// })
+
 app.post('/api/data', (req, res, next) => {
     console.log(req.body);
     const newUser = new userModel(req.body);
@@ -313,36 +318,36 @@ app.get('/api/deleteDevice/:id', verifyToken, function (req, res) {
 // UpdateDevice put api
 // app.put('/api/updateDevice/:id', verifyToken, (req, res, next) => {
 app.put('/api/updateDevice/:id', (req, res, next) => {
-    console.log(req.body);
+    // console.log(req.body);
 
-    ref.update({ S1: 0 });
+console.log("state ----> ",req.body);
+// return;
 
-    // ref.once("value")
-    //     .then(function (snap) {
-    //         console.log("snap.val()", snap.val());
-    //     });
-    // firebase.firestore().collection("devices").doc('JVTHk4rvFhIF1Ur0oGVV').set({sDevice: 1});
-    // return res.status(200).send();
-    // firebase.firestore().collection("devices").where("sDevice", "==", 1).get().then(function (querySnapshot) {
-    //     querySnapshot.forEach((doc) => {
-    //         const { sDevice } = doc.data();
-    //         console.log('querySnapshot', doc.data(), sDevice);
-    //     })
-    // }).catch(function (error) {
-    //     console.log("Error getting documents: ", error);
-    // });
+    
     // jwt.verify(req.token, 'secretkey', (err, authData) => {
     //     if (err) {
     //         res.sendStatus(403);
     //     } else {
-    //         deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
-    //             console.log(device);
-    //             if (err) {
-    //                 return res.status(500).send({ error: "unsuccessful" })
-    //             };
-    //             console.log(device);
-    //             res.status(201).json({ message: device });
-    //         });
+    deviceModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, upsert: true }, (err, device) => {
+        console.log(device);
+        if (err) {
+            return res.status(500).send({ error: "unsuccessful" })
+        };
+        console.log(device);
+
+        var state = req.body.state;
+
+        console.log(state);
+
+        ref.update({ [req.params.id]: req.body.state });
+
+        ref.once("value")
+            .then(function (snap) {
+                console.log("snap.val()", snap.val());
+            });
+
+        res.status(201).json({ message: device });
+    });
     //     }
     // });
 })
