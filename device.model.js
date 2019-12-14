@@ -5,8 +5,7 @@ const deviceSchema = new Schema({
     type: { type: String },
     device_id: { type: String },
     state: { type: String, default: "off" },
-    zone_id: { type: String, required: true },
-    is_used: { type: Boolean, default: false }
+    zone_id: { type: String, required: true }
 });
 
 module.exports = mongoose.model('device', deviceSchema);

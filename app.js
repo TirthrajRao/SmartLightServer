@@ -441,5 +441,5 @@ function verifyToken(req, res, next) {
 
 const server = http.createServer(app)
 server.listen(4000, () => {
-    console.log('server started on port 8080 to show changes using nodemon');
+    console.log('server started on port 4000 to show changes using nodemon');
 });
