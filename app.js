@@ -10,6 +10,7 @@ const deviceModel = require('./device.model');
 const userController = require('./user.controller');
 const firebase = require('./Firebase');
 const ref = firebase.app().database().ref();
+const cors = require('cors');
 
 mongoose.connect('mongodb://localhost:27017/myFirstApp', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
@@ -23,6 +24,8 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
+
+app.use(cors());
 
 // app.use((req, res, next) => {
 //     console.log('req.body: ', req.body);
@@ -50,7 +53,8 @@ app.post('/api/login', (req, res, next) => {
 
     const newUser = new userModel(req.body);
 
-    console.log("Email for login :::::::::::::::::::::::::: ", newUser.password);
+    console.log("Email for login ::::::::::::::::::::::::::==> ", newUser.email);
+    console.log("Password for login :::::::::::::::::::::::::: ==>", newUser.password);
 
     userModel.find({ email: newUser.email, password: newUser.password }).exec((err, user) => {
         console.log("Status Api Is working", user);
