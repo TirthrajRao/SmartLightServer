@@ -414,7 +414,7 @@ app.get('/api/Demo/:id', function (req, res) {
 
     });
 });
-
+//mongoimport --db=myFirstApp --collection=devices --file=devices.json
 // Schedule Time to on/off device post api
 app.post('/api/scheduleDevice', (req, res, next) => {
     console.log(req.body);
